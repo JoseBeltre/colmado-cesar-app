@@ -6,18 +6,16 @@
 
 ## 🚀 Características
 
-### ✅ Funcionalidades Actuales
+### ✅ Funcionalidades en Desarrollo
 - [ ] 📋 **Gestión de Clientes**: Registro de clientes con deudas y pagos.
 - [ ] 💰 **Control Financiero**: Registro diario de ingresos y egresos.
 - [ ] 👥 **Manejo de Empleados**: Acceso con roles y permisos personalizados.
 - [ ] 📊 **Reportes**: Generación de informes mensuales en PDF.
 - [ ] 🔐 **Autenticación Segura**: Login con JWT y control de accesos.
-
-### 🔄 Funcionalidades en Desarrollo
-- 📅 **Historial de Transacciones**: Registro detallado de cada movimiento financiero.
-- 📢 **Notificaciones**: Alertas cuando un cliente tenga deuda alta.
-- 📈 **Panel de Análisis**: Gráficos sobre el estado financiero del colmado.
-- 🌙 **Modo Oscuro**: Diseño optimizado para uso nocturno.
+- [ ] 📅 **Historial de Transacciones**: Registro detallado de cada movimiento financiero.
+- [ ] 📢 **Notificaciones**: Alertas cuando un cliente tenga deuda alta.
+- [ ] 📈 **Panel de Análisis**: Gráficos sobre el estado financiero del colmado.
+- [ ] 🌙 **Modo Oscuro**: Diseño optimizado para uso nocturno.
 
 ## 🛠️ Tecnologías Utilizadas
 
