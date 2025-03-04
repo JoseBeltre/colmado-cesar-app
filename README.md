@@ -7,11 +7,11 @@
 ## 🚀 Características
 
 ### ✅ Funcionalidades Actuales
-- 📋 **Gestión de Clientes**: Registro de clientes con deudas y pagos.
-- 💰 **Control Financiero**: Registro diario de ingresos y egresos.
-- 👥 **Manejo de Empleados**: Acceso con roles y permisos personalizados.
-- 📊 **Reportes**: Generación de informes mensuales en PDF.
-- 🔐 **Autenticación Segura**: Login con JWT y control de accesos.
+- []📋 **Gestión de Clientes**: Registro de clientes con deudas y pagos.
+- []💰 **Control Financiero**: Registro diario de ingresos y egresos.
+- []👥 **Manejo de Empleados**: Acceso con roles y permisos personalizados.
+- []📊 **Reportes**: Generación de informes mensuales en PDF.
+- []🔐 **Autenticación Segura**: Login con JWT y control de accesos.
 
 ### 🔄 Funcionalidades en Desarrollo
 - 📅 **Historial de Transacciones**: Registro detallado de cada movimiento financiero.
