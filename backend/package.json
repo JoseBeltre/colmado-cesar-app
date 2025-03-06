@@ -1,0 +1,21 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for the Colmado Cesar app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm --watch index.js"
+  },
+  "keywords": [
+    "backend",
+    "node",
+    "nodejs",
+    "express"
+  ],
+  "author": "Jose L. Beltre",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "zod": "^3.24.2"
+  }
+}
