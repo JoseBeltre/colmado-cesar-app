@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "backend for the Colmado Cesar app",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "npm --watch index.js"
+    "dev": "node --watch index.js"
   },
   "keywords": [
     "backend",
@@ -14,8 +15,15 @@
   ],
   "author": "Jose L. Beltre",
   "license": "MIT",
+  "eslintConfig": {
+    "extends": "standard"
+  },
   "dependencies": {
     "express": "^4.21.2",
+    "mysql2": "^3.13.0",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "standard": "^17.1.2"
   }
 }
