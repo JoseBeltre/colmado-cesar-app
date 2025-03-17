@@ -1,0 +1,13 @@
+#### TRYING TO REGISTER
+
+POST http://localhost:1234/auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Jose",
+  "lastName": "Beltre",
+  "role": "admin",
+  "email": "552006jose@gmail.com",
+  "phoneNumber": "8295714501",
+  "password": "12345678"
+}

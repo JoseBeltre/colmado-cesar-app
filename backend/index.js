@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
   res.send('HOLAAA')
 })
 
-app.use('/auth', authRouter())
+app.use('/auth', authRouter)
 
 app.listen(PORT, () => {
   console.log(`SERVER LISTENING ON PORT http://localhost:${PORT}`)
