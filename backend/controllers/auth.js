@@ -1,4 +1,4 @@
-import { validateEmployee } from '../schemas/user.js'
+import { validateEmployee } from '../schemas/employee.js'
 import { UserModel } from '../models/auth.js'
 
 export class AuthController {
