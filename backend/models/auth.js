@@ -1,7 +1,9 @@
 import mysql from 'mysql2/promise'
 import bcrypt from 'bcrypt'
-import { DB_CONFIG, SALT_ROUNDS } from '../config.js'
+import { DB_CONFIG, JWT_SECRET, SALT_ROUNDS } from '../config.js'
 import { generateUsername } from '../utils/generateUsername.js'
+import { sendActivationEmail } from '../services/emailService.js'
+import jwt from 'jsonwebtoken'
 
 const conn = await mysql.createConnection(DB_CONFIG)
 
@@ -33,7 +35,7 @@ export class UserModel {
 
     try {
       // Hasheando la contrasena
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
+      const hashedPassword = await bcrypt.hash(password, parseInt(SALT_ROUNDS))
 
       // obtener el id del rol
       const [roleId] = await conn.query('SELECT id FROM roles WHERE role = ?', [role])
@@ -47,6 +49,29 @@ export class UserModel {
       if (result.affectedRows === 0) {
         throw new Error('No se pudo insertar el registro.')
       }
+
+      // Creacion del token de activacion
+      const token = jwt.sign(
+        { username },
+        JWT_SECRET,
+        { expiresIn: '1d' }
+      )
+
+      // Enviando el correo de activacion
+      await sendActivationEmail({
+        token,
+        userData: {
+          name: `${firstName} ${lastName}`,
+          username,
+          email,
+          phoneNumber,
+          createdAt: new Date(),
+          role
+        },
+        approvedUrl: 'http://localhost:1234/auth/activate',
+        deniedUrl: 'http://localhost:1234/auth/deny'
+      })
+
       return {
         username,
         firstName,

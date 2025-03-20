@@ -4,10 +4,10 @@ POST http://localhost:1234/auth/register
 Content-Type: application/json
 
 {
-  "firstName": "Fernando Luis",
-  "lastName": "Paredes Cordero",
-  "role": "admin",
-  "email": "ferluis@gmail.com",
+  "firstName": "Gustavo",
+  "lastName": "Paredes Perez",
+  "role": "vendedor",
+  "email": "manos@gmail.com",
   "phoneNumber": "8095345541",
   "password": "12345678"
 }
