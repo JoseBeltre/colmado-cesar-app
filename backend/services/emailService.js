@@ -73,11 +73,6 @@ export async function sendActivationEmail ({ token, userData, approvedUrl, denie
     </div>
     `
   }
-
-  try {
-    const info = await transporter.sendMail(emailOptions)
-    console.log('Message sent: %s', info.messageId)
-  } catch (error) {
-    console.error(error)
-  }
+  const info = await transporter.sendMail(emailOptions)
+  return info
 }

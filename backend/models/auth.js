@@ -1,9 +1,7 @@
 import mysql from 'mysql2/promise'
 import bcrypt from 'bcrypt'
-import { DB_CONFIG, JWT_SECRET, SALT_ROUNDS } from '../config.js'
+import { DB_CONFIG, SALT_ROUNDS } from '../config.js'
 import { generateUsername } from '../utils/generateUsername.js'
-import { sendActivationEmail } from '../services/emailService.js'
-import jwt from 'jsonwebtoken'
 
 const conn = await mysql.createConnection(DB_CONFIG)
 
@@ -23,13 +21,13 @@ export class UserModel {
 
     // Verificar si el usuario ya existe
     const userExists = await UserModel.getOne({ camp: 'username', value: username })
-    if (userExists) {
+    if (userExists !== null) {
       throw new Error('El usuario ya existe.')
     }
 
     // Verificar si el email ya existe
     const emailExists = await UserModel.getOne({ camp: 'email', value: email })
-    if (emailExists) {
+    if (emailExists !== null) {
       throw new Error('El email ya existe.')
     }
 
@@ -38,39 +36,18 @@ export class UserModel {
       const hashedPassword = await bcrypt.hash(password, parseInt(SALT_ROUNDS))
 
       // obtener el id del rol
-      const [roleId] = await conn.query('SELECT id FROM roles WHERE role = ?', [role])
-      if (roleId.length <= 0) {
+      const [rows] = await conn.query('SELECT id FROM roles WHERE role = ?', [role])
+      if (rows.length <= 0) {
         throw new Error('El rol especificado parece no existir.')
       }
+      const roleId = rows[0].id
 
       // Insertando nuevo empleado
-      const [result] = await conn.query('INSERT INTO employees (first_name, last_name, role_id, email, phone_number, password, username) VALUES (?, ?, ?, ?, ?, ?, ?)', [firstName, lastName, roleId[0].id, email, phoneNumber, hashedPassword, username])
+      const [result] = await conn.query('INSERT INTO employees (first_name, last_name, role_id, email, phone_number, password, username) VALUES (?, ?, ?, ?, ?, ?, ?)', [firstName, lastName, roleId, email, phoneNumber, hashedPassword, username])
       // Verificar si se inserto el registro
       if (result.affectedRows === 0) {
         throw new Error('No se pudo insertar el registro.')
       }
-
-      // Creacion del token de activacion
-      const token = jwt.sign(
-        { username },
-        JWT_SECRET,
-        { expiresIn: '1d' }
-      )
-
-      // Enviando el correo de activacion
-      await sendActivationEmail({
-        token,
-        userData: {
-          name: `${firstName} ${lastName}`,
-          username,
-          email,
-          phoneNumber,
-          createdAt: new Date(),
-          role
-        },
-        approvedUrl: 'http://localhost:1234/auth/activate',
-        deniedUrl: 'http://localhost:1234/auth/deny'
-      })
 
       return {
         username,
@@ -81,8 +58,20 @@ export class UserModel {
         phoneNumber
       }
     } catch (error) {
-      console.error(`Error en RecordsModel.create: ${error.message}`)
+      console.error(`Error en UserModel.create: ${error.message}`)
       throw new Error('Error al añadir el nuevo registro a la base de datos')
+    }
+  }
+
+  static async activate ({ username }) {
+    try {
+      const [result] = await conn.query(
+        'UPDATE employees SET activated = TRUE WHERE username = ?',
+        [username])
+      return result.affectedRows > 0
+    } catch (error) {
+      console.error(`Error en UserModel.activate: ${error.message}`)
+      throw new Error(`Error al activar el usuario: ${username}`)
     }
   }
 
@@ -91,6 +80,10 @@ export class UserModel {
   }
 
   static async getOne ({ camp, value }) {
+    const allowedFields = ['id', 'username', 'email']
+    if (!allowedFields.includes(camp)) {
+      throw new Error('Campo no permitido.')
+    }
     // Formateamos el campo para que funcione la consulta
     camp = `e.${camp}`
 
