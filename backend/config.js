@@ -15,7 +15,8 @@ export const {
   EMAIL_HOST,
   EMAIL_PORT,
   EMAIL_SECURE = true,
-  JWT_SECRET
+  JWT_SECRET,
+  WEB_URL
 } = process.env
 
 export const DB_CONFIG = {

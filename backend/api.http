@@ -18,5 +18,5 @@ POST http://localhost:1234/auth/activate
 Content-Type: application/json
 
 {
-  "token": "fgs"
+  "token": ""
 }
