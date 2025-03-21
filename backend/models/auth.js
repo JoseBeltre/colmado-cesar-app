@@ -75,6 +75,18 @@ export class UserModel {
     }
   }
 
+  static async deny ({ username }) {
+    try {
+      const [result] = await conn.query(
+        'DELETE FROM employees WHERE username = ? AND activated = FALSE',
+        [username])
+      return result.affectedRows > 0
+    } catch (error) {
+      console.error(`Error en UserModel.deny: ${error.message}`)
+      throw new Error(`Error al eliminar el usuario: ${username}`)
+    }
+  }
+
   static async login () {
 
   }

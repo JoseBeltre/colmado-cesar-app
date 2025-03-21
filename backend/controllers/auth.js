@@ -65,6 +65,29 @@ export class AuthController {
     }
   }
 
+  static async deny (req, res) {
+    const { token } = req.query
+    if (!token) {
+      res.json({ message: 'No se ha proporcionado el token.' })
+    }
+    try {
+      // Verificar que el token sea correcto
+      const decoded = jwt.verify(token, JWT_SECRET)
+      const { username, email } = decoded
+      // Cambiar estado a activo
+      const userActivated = await UserModel.deny({ username })
+      // Verificar si el usuario fue activado
+      if (!userActivated) {
+        return res.status(400).json({ message: 'Ocurrió un error al eliminar la cuenta.' })
+      }
+      // Enviar corre de notificacion al usuario
+      await sendActivationResponseEmail({ email, username, isApproved: false })
+      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.' })
+    } catch (error) {
+      return res.status(500).json({ message: 'Token inválido o expirado.' })
+    }
+  }
+
   static async login (req, res) {
 
   }
