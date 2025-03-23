@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Colores */
+  --color-primary: #327CEC ;
+  --color-secondary: #D85454 ;
+  --color-cold-white: #E3EDFF ;
+  /*  */
+  --default-font-family: "Geist", system-ui, sans-serif;
+
+}
