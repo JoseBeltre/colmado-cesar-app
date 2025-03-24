@@ -6,7 +6,9 @@
   --color-primary: #327CEC ;
   --color-secondary: #D85454 ;
   --color-cold-white: #E3EDFF ;
+  --color-dark: #131111;
   /*  */
   --default-font-family: "Geist", system-ui, sans-serif;
+  --breakpoint-xs: 300px;
 
 }
