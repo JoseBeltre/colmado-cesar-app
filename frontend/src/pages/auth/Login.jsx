@@ -14,7 +14,7 @@ export function Login () {
       <p className='text-red-400 text-center text-sm'>Contraseña incorrecta</p>
       <button className='bg-primary p-2.5 text-white font-extrabold tracking-wider rounded-lg outline-3 dark:outline-2 outline-primary hover:bg-primary/50 hover:text-primary cursor-pointer transition-colors' type='submit'> Entrar </button>
 
-      <div className='leading-4 text-center text-white/70 font-extralight text-sm'>
+      <div className='leading-4 text-center dark:text-white/70 dark:font-extralight text-sm'>
         <p>¿Olvidó su contraseña? <Link to='/auth/register' className='text-primary font-medium underline'>Recuperar</Link></p>
         <p>¿Aún no tiene una cuenta? <Link to='/auth/register' className='text-primary font-medium underline'>Crear cuenta</Link></p>
       </div>
