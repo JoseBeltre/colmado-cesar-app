@@ -36,7 +36,6 @@ export function Register () {
       }))
     }
   }
-
   // Funcion para manejar el cambio de los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target

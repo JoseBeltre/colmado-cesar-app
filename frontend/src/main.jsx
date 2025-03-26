@@ -6,6 +6,7 @@ import { Home } from './pages/Home'
 import { Login } from './pages/auth/Login'
 import { Register } from './pages/auth/Register'
 import { AuthLayout } from './pages/auth/AuthLayout'
+import { AccountActivation } from './pages/auth/AccountActivation'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,14 @@ const router = createBrowserRouter([
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> }
     ]
+  },
+  {
+    path: '/auth/activate',
+    element: <AccountActivation />
+  },
+  {
+    path: '/auth/deny',
+    element: <AccountActivation action='deny' />
   }
 ])
 

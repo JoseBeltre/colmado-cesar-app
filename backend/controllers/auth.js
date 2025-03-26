@@ -59,7 +59,7 @@ export class AuthController {
       }
       // Enviar corre de notificacion al usuario
       await sendActivationResponseEmail({ email, username, isApproved: true })
-      return res.status(200).json({ message: 'Cuenta activada correctamente.' })
+      return res.status(200).json({ message: 'Cuenta activada correctamente.', success: true })
     } catch (error) {
       return res.status(500).json({ message: 'Token inválido o expirado.' })
     }
@@ -82,7 +82,7 @@ export class AuthController {
       }
       // Enviar corre de notificacion al usuario
       await sendActivationResponseEmail({ email, username, isApproved: false })
-      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.' })
+      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.', success: true })
     } catch (error) {
       return res.status(500).json({ message: 'Token inválido o expirado.' })
     }
