@@ -1,8 +1,11 @@
 import { Input } from '../../components/Input'
+import { InputPassword } from '../../components/InputPassword'
 import { Link } from 'react-router-dom'
 import { Select } from '../../components/Select'
 import { validateEmployee } from '../../../schemas/employee'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { authService } from '../../../services/authServices'
+import { AlertBox } from '../../components/AlertBox'
 
 export function Register () {
   const [formData, setFormData] = useState({
@@ -15,27 +18,27 @@ export function Register () {
     confirmPassword: ''
   })
   const [errors, setErrors] = useState({})
+  const [mainError, setMainError] = useState('')
+  const [isAlertBoxOpen, setIsAlertBoxOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Funcion para manejar el cambio de la contraseña y confirmar contraseña
-  const handleConfirmPassword = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-
-    if (value !== formData.password && value === '') {
-      setErrors(prev => ({
-        ...prev,
-        confirmPassword: 'Las contraseñas no coinciden'
-      }))
-    } else {
-      setErrors(prev => ({
-        ...prev,
-        confirmPassword: ''
-      }))
+  useEffect(() => {
+    if (formData.password && formData.confirmPassword) {
+      if (formData.password !== formData.confirmPassword) {
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: 'Las contraseñas no coinciden'
+        }))
+      } else {
+        setErrors(prev => ({
+          ...prev,
+          confirmPassword: ''
+        }))
+      }
     }
-  }
+  }, [formData.password, formData.confirmPassword])
+
   // Funcion para manejar el cambio de los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -45,7 +48,7 @@ export function Register () {
     }))
   }
   // Funcion para manejar el envio del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const result = validateEmployee(formData)
 
@@ -55,16 +58,36 @@ export function Register () {
         formattedErrors[err.path[0]] = err.message
       })
       setErrors(formattedErrors)
+      return
     }
     if (formData.password !== formData.confirmPassword) {
       setErrors(prev => ({
         ...prev,
         confirmPassword: 'Las contraseñas no coinciden'
       }))
+      return
     }
     setErrors({})
-
-    // TODO: Enviar los datos al backend para crear la cuenta
+    setIsLoading(true)
+    const resultAPI = await authService.register(formData)
+    if (!resultAPI.success) {
+      if (resultAPI.message === 'Failed to fetch') {
+        resultAPI.message = 'Error al conectar con el servidor.'
+      }
+      setMainError(resultAPI.message)
+    } else {
+      setIsAlertBoxOpen(true)
+      setFormData({
+        firstName: '',
+        lastName: '',
+        role: 'vendedor',
+        email: '',
+        phoneNumber: '',
+        password: '',
+        confirmPassword: ''
+      })
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -124,34 +147,42 @@ export function Register () {
           error={errors?.phoneNumber}
           required
         />
-        <Input
+        <InputPassword
           name='password'
           title='Contraseña'
           placeholder='Ingrese una contraseña'
-          type='text'
-          onChange={handleConfirmPassword}
+          type='password'
+          onChange={handleChange}
           value={formData.password}
           error={errors?.password}
           required
         />
-        <Input
+        <InputPassword
           name='confirmPassword'
           title='Confirmar contraseña'
           placeholder='Vuelva a ingresar su contraseña'
-          type='text'
-          onChange={handleConfirmPassword}
+          type='password'
+          onChange={handleChange}
           value={formData.confirmPassword}
           error={errors?.confirmPassword}
           required
         />
 
       </div>
-      {/* <p className='text-red-400 text-center text-sm'>Contraseña incorrecta</p> */}
-      <button className='bg-primary p-2.5 mt-3 text-white font-extrabold tracking-wider rounded-lg outline-3 dark:outline-2 outline-primary hover:bg-primary/50 hover:text-primary cursor-pointer transition-colors' type='submit'> Crear cuenta </button>
+      <p className='text-red-400 text-center text-sm'>{mainError}</p>
+      <button className='bg-primary p-2.5 mt-3 text-white font-extrabold tracking-wider rounded-lg outline-3 dark:outline-2 outline-primary hover:bg-primary/50 hover:text-primary cursor-pointer transition-colors' type='submit'>
+        {isLoading ? 'Procesando...' : 'Crear Cuenta'}
+      </button>
 
       <div className='leading-4 text-center dark:text-white/70 dark:font-extralight text-sm'>
         <p>¿Ya tienes una cuenta? <Link to='/auth/login' className='text-primary font-medium underline'>Iniciar sesión</Link></p>
       </div>
+      {
+      isAlertBoxOpen &&
+        <AlertBox type='success' closeModal={() => setIsAlertBoxOpen(!isAlertBoxOpen)}>
+          Su solicitud ha sido enviada a un administrador, se le avisará mediante su correo cuando su cuenta esté en funcionamiento. ¡Atento!
+        </AlertBox>
+      }
     </form>
   )
 }

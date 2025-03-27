@@ -8,6 +8,9 @@
   --color-secondary: #D85454 ;
   --color-cold-white: #E3EDFF ;
   --color-dark: #131111;
+  --color-success: #4C979A;
+  --color-error: #D85454;
+  --color-warning: #FFD200;
   /* Fonts */
   --default-font-family: "Geist", system-ui, sans-serif;
   --font-sansita: "Sansita", system-ui, sans-serif;
