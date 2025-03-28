@@ -3,6 +3,7 @@ import Logotipo from '../../components/Logotipo'
 import { useSearchParams } from 'react-router-dom'
 import { authService } from '../../../services/authServices'
 import { useState, useEffect } from 'react'
+import { Spinner } from '../../components/Spinner'
 
 export function AccountActivation ({ action = 'activate' }) {
   const [searchParams] = useSearchParams()
@@ -57,8 +58,8 @@ export function AccountActivation ({ action = 'activate' }) {
   if (status === null) {
     // Cargando o esperando respuesta
     return (
-      <div className='flex justify-center items-center'>
-        <p>Cargando...</p>
+      <div className='min-h-dvh flex justify-center items-center'>
+        <Spinner size='lg' />
       </div>
     )
   }

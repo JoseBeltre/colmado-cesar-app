@@ -6,6 +6,7 @@ import { validateEmployee } from '../../../schemas/employee'
 import { useEffect, useState } from 'react'
 import { authService } from '../../../services/authServices'
 import { AlertBox } from '../../components/AlertBox'
+import { Spinner } from '../../components/Spinner'
 
 export function Register () {
   const [formData, setFormData] = useState({
@@ -171,7 +172,7 @@ export function Register () {
       </div>
       <p className='text-red-400 text-center text-sm'>{mainError}</p>
       <button className='bg-primary p-2.5 mt-3 text-white font-extrabold tracking-wider rounded-lg outline-3 dark:outline-2 outline-primary hover:bg-primary/50 hover:text-primary cursor-pointer transition-colors' type='submit'>
-        {isLoading ? 'Procesando...' : 'Crear Cuenta'}
+        {isLoading ? <Spinner color='#132849' /> : 'Crear Cuenta'}
       </button>
 
       <div className='leading-4 text-center dark:text-white/70 dark:font-extralight text-sm'>
