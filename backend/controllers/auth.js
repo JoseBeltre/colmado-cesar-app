@@ -43,9 +43,10 @@ export class AuthController {
   }
 
   static async activate (req, res) {
-    const { token } = req.query
+    const { token } = req.body
+    console.log(token)
     if (!token) {
-      res.json({ message: 'No se ha proporcionado el token.' })
+      return res.status(400).json({ message: 'No se ha proporcionado el token.' })
     }
     try {
       // Verificar que el token sea correcto
@@ -59,16 +60,16 @@ export class AuthController {
       }
       // Enviar corre de notificacion al usuario
       await sendActivationResponseEmail({ email, username, isApproved: true })
-      return res.status(200).json({ message: 'Cuenta activada correctamente.', success: true })
+      return res.status(200).json({ message: 'Cuenta activada correctamente.', username })
     } catch (error) {
       return res.status(500).json({ message: 'Token inválido o expirado.' })
     }
   }
 
   static async deny (req, res) {
-    const { token } = req.query
+    const { token } = req.body
     if (!token) {
-      res.json({ message: 'No se ha proporcionado el token.' })
+      return res.status(400).json({ message: 'No se ha proporcionado el token.' })
     }
     try {
       // Verificar que el token sea correcto
@@ -82,7 +83,7 @@ export class AuthController {
       }
       // Enviar corre de notificacion al usuario
       await sendActivationResponseEmail({ email, username, isApproved: false })
-      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.', success: true })
+      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.', username })
     } catch (error) {
       return res.status(500).json({ message: 'Token inválido o expirado.' })
     }

@@ -1,34 +1,68 @@
 import { Info, CircleCheckBig, Ban } from 'lucide-react'
 import Logotipo from '../../components/Logotipo'
+import { useSearchParams } from 'react-router-dom'
+import { authService } from '../../../services/authServices'
+import { useState, useEffect } from 'react'
 
 export function AccountActivation ({ action = 'activate' }) {
-  const success = true
-  const fontColor = success ? (action === 'activate' ? '#277cec' : '#d85454') : '#ff9500'
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')
+  const [status, setStatus] = useState(null)
 
-  const getTexts = () => {
-    if (!success) {
-      return {
-        title: 'Ha ocurrido un error',
-        subtitle: 'No se ha podido procesar la solicitud',
-        description: 'Es probable que el token no funcione o esté expirado.'
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) {
+        setStatus({
+          success: false,
+          title: 'Ha ocurrido un error',
+          subtitle: 'No se ha podido procesar la solicitud',
+          description: 'Es probable que el token no funcione o esté expirado.',
+          fontColor: '#ff9500'
+        })
+        return
       }
+
+      let result
+      if (action === 'activate') {
+        result = await authService.activate(token)
+      } else {
+        result = await authService.deny(token)
+      }
+
+      if (!result.success) {
+        setStatus({
+          success: false,
+          title: 'Ha ocurrido un error',
+          subtitle: 'No se ha podido procesar la solicitud',
+          description: 'Es probable que el token no funcione o esté expirado.',
+          fontColor: '#ff9500'
+        })
+        return
+      }
+
+      setStatus({
+        success: true,
+        title: action === 'activate' ? 'Cuenta Activada' : 'Cuenta eliminada',
+        subtitle: action === 'activate' ? '¡Solicitud Aceptada!' : '¡Solicitud Denegada!',
+        description: action === 'activate'
+          ? `El usuario ${result.username} ya puede acceder a la aplicación web.`
+          : `La solicitud del usuario ${result.username} ha sido eliminada.`,
+        fontColor: action === 'activate' ? '#277cec' : '#d85454'
+      })
     }
 
-    return action === 'activate'
-      ? {
-          title: 'Cuenta Activada',
-          subtitle: '¡Solicitud Aceptada!',
-          description: 'El usuario manuel.perez ya puede acceder a la aplicación web.'
-        }
-      : {
-          title: 'Cuenta eliminada',
-          subtitle: '¡Solicitud Denegada!',
-          description: 'La solicitud del usuario manuel.perez ha sido eliminada.'
-        }
+    fetchData()
+  }, [token, action])
+
+  if (status === null) {
+    // Cargando o esperando respuesta
+    return (
+      <div className='flex justify-center items-center'>
+        <p>Cargando...</p>
+      </div>
+    )
   }
 
-  const { title, subtitle, description } = getTexts()
-  // Objeto con los diferentes iconoes
   const icons = {
     activate: <CircleCheckBig size='60' strokeWidth={1.5} color='#277cec' />,
     deny: <Ban size='60' strokeWidth={1.5} color='#d85454' />,
@@ -36,13 +70,16 @@ export function AccountActivation ({ action = 'activate' }) {
   }
 
   return (
-    <div className='flex flex-col min-h-dvh p-10'>
+    <div className='flex flex-col min-h-dvh p-10 text-center'>
       <div className='flex flex-col justify-center items-center flex-1'>
-        <div> {success ? icons[action] : icons.error}
-        </div>
-        <h1 className='font-sansita font-bold text-4xl' style={{ color: fontColor }}>{title}</h1>
-        <p className='text-black/70 dark:text-white/70 text-xl dark:font-extralight'>{subtitle}</p>
-        <p className='text-black/70 dark:text-white/70 text-xl dark:font-extralight text-center leading-5 mt-10 xs:w-78'>{description}</p>
+        <div>{status.success ? icons[action] : icons.error}</div>
+        <h1 className='font-sansita font-bold text-4xl text-center leading-7' style={{ color: status.fontColor }}>
+          {status.title}
+        </h1>
+        <p className='text-black/70 dark:text-white/70 text-xl dark:font-extralight leading-5 mt-2'>{status.subtitle}</p>
+        <p className='text-black/70 dark:text-white/70 text-xl dark:font-extralight text-center leading-5 mt-10 xs:w-78'>
+          {status.description}
+        </p>
       </div>
       <div className='flex justify-center items-center'>
         <Logotipo width='100px' fill='#277cec' />

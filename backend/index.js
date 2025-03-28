@@ -5,7 +5,9 @@ import { PORT } from './config.js'
 const app = express()
 
 app.use(cors({
-  origin: '*'
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }))
 app.use(express.json())
 
