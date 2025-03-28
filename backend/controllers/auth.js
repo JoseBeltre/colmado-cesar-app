@@ -7,23 +7,18 @@ import { sendActivationEmail, sendActivationResponseEmail } from '../services/em
 export class AuthController {
   static async register (req, res) {
     try {
-      // Validar los datos del empleado
       const result = validateEmployee(req.body)
-      // Si ocurre un error al validar
-      if (result.error) {
+      if (!result.success) {
         return res.status(400).json({ message: JSON.parse(result.error.message) })
       }
-      // Crear el nuevo empleado
-      const newUser = await UserModel.create({ user: result.data })
 
-      // Creacion del token de activacion
+      const newUser = await UserModel.create({ user: result.data })
       const token = jwt.sign(
         { username: newUser.username, email: newUser.email },
         JWT_SECRET,
         { expiresIn: '1d' }
       )
 
-      // Enviando el correo de activacion
       await sendActivationEmail({
         token,
         userData: {
@@ -38,31 +33,40 @@ export class AuthController {
 
       return res.status(201).json(newUser)
     } catch (error) {
-      return res.status(500).json({ message: error.message })
+      if (error.message.includes('ya existe')) {
+        return res.status(409).json({ message: error.message })
+      }
+      return res.status(500).json({ message: 'Error al registrar el usuario' })
     }
   }
 
   static async activate (req, res) {
     const { token } = req.body
-    console.log(token)
     if (!token) {
       return res.status(400).json({ message: 'No se ha proporcionado el token.' })
     }
+
     try {
-      // Verificar que el token sea correcto
-      const decoded = jwt.verify(token, JWT_SECRET)
-      const { username, email } = decoded
-      // Cambiar estado a activo
+      const { username, email } = jwt.verify(token, JWT_SECRET)
       const userActivated = await UserModel.activate({ username })
-      // Verificar si el usuario fue activado
+
       if (!userActivated) {
         return res.status(400).json({ message: 'No se pudo activar la cuenta.' })
       }
-      // Enviar corre de notificacion al usuario
+
       await sendActivationResponseEmail({ email, username, isApproved: true })
-      return res.status(200).json({ message: 'Cuenta activada correctamente.', username })
+      return res.status(200).json({
+        message: 'Cuenta activada correctamente.',
+        username
+      })
     } catch (error) {
-      return res.status(500).json({ message: 'Token inválido o expirado.' })
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Token inválido.' })
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expirado.' })
+      }
+      return res.status(500).json({ message: 'Error al activar la cuenta. ', error })
     }
   }
 
@@ -71,25 +75,69 @@ export class AuthController {
     if (!token) {
       return res.status(400).json({ message: 'No se ha proporcionado el token.' })
     }
+
     try {
-      // Verificar que el token sea correcto
-      const decoded = jwt.verify(token, JWT_SECRET)
-      const { username, email } = decoded
-      // Cambiar estado a activo
-      const userActivated = await UserModel.deny({ username })
-      // Verificar si el usuario fue activado
-      if (!userActivated) {
+      const { username, email } = jwt.verify(token, JWT_SECRET)
+      const userDenied = await UserModel.deny({ username })
+
+      if (!userDenied) {
         return res.status(400).json({ message: 'Ocurrió un error al eliminar la cuenta.' })
       }
-      // Enviar corre de notificacion al usuario
+
       await sendActivationResponseEmail({ email, username, isApproved: false })
-      return res.status(200).json({ message: 'Acceso denegado, cuenta eliminada.', username })
+      return res.status(200).json({
+        message: 'Acceso denegado, cuenta eliminada.',
+        username
+      })
     } catch (error) {
-      return res.status(500).json({ message: 'Token inválido o expirado.' })
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Token inválido.' })
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expirado.' })
+      }
+      return res.status(500).json({ message: 'Error al denegar la cuenta.' })
     }
   }
 
   static async login (req, res) {
+    const { username, password } = req.body
+    if (!username || !password) {
+      return res.status(400).json({
+        message: 'Usuario y contraseña son requeridos.'
+      })
+    }
 
+    try {
+      const user = await UserModel.login({ username, password })
+      if (!user.activated) {
+        return res.status(403).json({
+          message: 'La cuenta no está activada.'
+        })
+      }
+
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+          role: user.role
+        },
+        JWT_SECRET,
+        { expiresIn: '8h' }
+      )
+
+      return res.status(200).json({
+        token,
+        user: {
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          email: user.email
+        }
+      })
+    } catch (error) {
+      return res.status(401).json({ message: error.message })
+    }
   }
 }
