@@ -1,0 +1,32 @@
+{
+  "name": "colmado-cesar-app",
+  "version": "1.0.0",
+  "description": "Una aplicacion web que permite gestionar las finanzas de un colmado, Colmado Cesar.",
+  "main": ".",
+  "scripts": {
+    "start": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoseBeltre/colmado-cesar-app.git"
+  },
+  "keywords": [
+    "react",
+    "node",
+    "express",
+    "jwt",
+    "mysql",
+    "finances-manager",
+    "tailwindcss",
+    "vite"
+  ],
+  "author": "José L. Beltre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoseBeltre/colmado-cesar-app/issues"
+  },
+  "homepage": "https://github.com/JoseBeltre/colmado-cesar-app#readme",
+  "devDependencies": {
+    "concurrently": "9.1.2"
+  }
+}
