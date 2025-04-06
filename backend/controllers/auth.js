@@ -66,7 +66,7 @@ export class AuthController {
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({ message: 'Token expirado.' })
       }
-      return res.status(500).json({ message: 'Error al activar la cuenta. ', error })
+      return res.status(500).json({ message: 'Error al activar la cuenta.' })
     }
   }
 

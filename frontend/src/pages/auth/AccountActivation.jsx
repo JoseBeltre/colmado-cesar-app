@@ -30,6 +30,8 @@ export function AccountActivation ({ action = 'activate' }) {
         result = await authService.deny(token)
       }
 
+      console.log(result)
+
       if (!result.success) {
         setStatus({
           success: false,
@@ -46,8 +48,8 @@ export function AccountActivation ({ action = 'activate' }) {
         title: action === 'activate' ? 'Cuenta Activada' : 'Cuenta eliminada',
         subtitle: action === 'activate' ? '¡Solicitud Aceptada!' : '¡Solicitud Denegada!',
         description: action === 'activate'
-          ? `El usuario ${result.username} ya puede acceder a la aplicación web.`
-          : `La solicitud del usuario ${result.username} ha sido eliminada.`,
+          ? `El usuario ${result.data.username} ya puede acceder a la aplicación web.`
+          : `La solicitud del usuario ${result.data.username} ha sido eliminada.`,
         fontColor: action === 'activate' ? '#277cec' : '#d85454'
       })
     }

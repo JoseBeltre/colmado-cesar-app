@@ -57,5 +57,24 @@ export const authService = {
       console.error('Error en la petición:', error)
       return { success: false, message: error.message }
     }
+  },
+  login: async ({ username, password }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || `Error: ${response.status}`)
+      }
+      const result = await response.json()
+      return { success: true, data: result }
+    } catch (error) {
+      console.error('Error en la petición:', error)
+      return { success: false, message: error.message }
+    }
   }
 }
