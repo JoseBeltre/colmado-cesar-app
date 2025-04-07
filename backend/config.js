@@ -15,7 +15,9 @@ export const {
   EMAIL_HOST,
   EMAIL_PORT,
   EMAIL_SECURE = true,
-  JWT_SECRET,
+  AUTH_SECRET,
+  REFRESH_SECRET,
+  ACCESS_SECRET,
   WEB_URL
 } = process.env
 
