@@ -70,6 +70,42 @@ export class UserModel {
     return user
   }
 
+  static async addRefreshToken ({ username, token, expiresAt }) {
+    const [result] = await conn.query(
+      'INSERT INTO refresh_tokens (token, username, expires_at) VALUES (?, ?, ?)',
+      [token, username, expiresAt])
+
+    return result.affectedRows > 0
+  }
+
+  static async verifyRefreshToken ({ username, token }) {
+    const [result] = await conn.query(
+      'SELECT * FROM refresh_tokens WHERE username = ? AND token = ?',
+      [username, token])
+
+    if (result.length === 0) {
+      return false
+    }
+
+    return result[0]
+  }
+
+  static async deleteRefreshToken ({ username, token }) {
+    const [result] = await conn.query(
+      'DELETE FROM refresh_tokens WHERE username = ? AND token = ?',
+      [username, token])
+
+    return result.affectedRows > 0
+  }
+
+  static async deleteAllRefreshTokens ({ username }) {
+    const [result] = await conn.query(
+      'DELETE FROM refresh_tokens WHERE username = ?',
+      [username])
+
+    return result.affectedRows > 0
+  }
+
   static async getOne ({ camp, value }) {
     const allowedFields = ['id', 'username', 'email']
     if (!allowedFields.includes(camp)) {

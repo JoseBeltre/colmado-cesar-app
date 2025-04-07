@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { validateEmployee } from '../schemas/employee.js'
 import { UserModel } from '../models/auth.js'
-import { JWT_SECRET } from '../config.js'
+import { ACCESS_SECRET, AUTH_SECRET, REFRESH_SECRET } from '../config.js'
 import { sendActivationEmail, sendActivationResponseEmail } from '../services/emailService.js'
 
 export class AuthController {
@@ -15,7 +15,7 @@ export class AuthController {
       const newUser = await UserModel.create({ user: result.data })
       const token = jwt.sign(
         { username: newUser.username, email: newUser.email },
-        JWT_SECRET,
+        AUTH_SECRET,
         { expiresIn: '1d' }
       )
 
@@ -47,7 +47,7 @@ export class AuthController {
     }
 
     try {
-      const { username, email } = jwt.verify(token, JWT_SECRET)
+      const { username, email } = jwt.verify(token, AUTH_SECRET)
       const userActivated = await UserModel.activate({ username })
 
       if (!userActivated) {
@@ -77,7 +77,7 @@ export class AuthController {
     }
 
     try {
-      const { username, email } = jwt.verify(token, JWT_SECRET)
+      const { username, email } = jwt.verify(token, AUTH_SECRET)
       const userDenied = await UserModel.deny({ username })
 
       if (!userDenied) {
@@ -116,20 +116,41 @@ export class AuthController {
         })
       }
 
-      const token = jwt.sign(
+      const refreshToken = jwt.sign(
         {
-          id: user.id,
-          username: user.username,
+          username,
           role: user.role
         },
-        JWT_SECRET,
-        { expiresIn: '8h' }
+        REFRESH_SECRET,
+        { expiresIn: '30d' }
+      )
+
+      const expiresInDays = 30
+      const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000)
+
+      const tokenResult = await UserModel.addRefreshToken({ username, token: refreshToken, expiresAt })
+      if (!tokenResult) throw new Error('Error al iniciar sesión.')
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false, // false para desarrollo
+        sameSite: 'Strict',
+        maxAge: expiresInDays * 24 * 60 * 60 * 1000
+      })
+
+      const accessToken = jwt.sign(
+        {
+          username,
+          role: user.role
+        },
+        ACCESS_SECRET,
+        { expiresIn: '15m' }
       )
 
       return res.status(200).json({
-        token,
+        token: accessToken,
         user: {
-          username: user.username,
+          username,
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
@@ -140,4 +161,88 @@ export class AuthController {
       return res.status(401).json({ message: error.message })
     }
   }
+
+  static async refreshToken (req, res) {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'No se proveyó el token de refresco.' })
+    }
+    try {
+      const { username, role } = jwt.verify(refreshToken, REFRESH_SECRET)
+
+      const data = await UserModel.verifyRefreshToken({ username, token: refreshToken })
+      if (!data || new Date(data.expires_at) < new Date()) {
+        res.clearCookie('refreshToken', {
+          httpOnly: true,
+          secure: false, // true en producción
+          sameSite: 'Strict'
+        })
+        return res.status(401).json({ message: 'El token no existe.' })
+      }
+
+      const accessToken = jwt.sign(
+        {
+          username,
+          role
+        },
+        ACCESS_SECRET,
+        { expiresIn: '15m' }
+      )
+
+      return res.status(200).json({ token: accessToken })
+    } catch (error) {
+      return res.status(401).json({ message: error.message })
+    }
+  }
+
+  static async logout (req, res) {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'No se proveyó el token de refresco.' })
+    }
+    try {
+      const { username } = jwt.verify(refreshToken, REFRESH_SECRET)
+      const deleteToken = await UserModel.deleteRefreshToken({ username, token: refreshToken })
+
+      if (!deleteToken) {
+        return res.status(500).json({ message: 'Error al cerrar sesión' })
+      }
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: false, // true en producción
+        sameSite: 'Strict'
+      })
+      return res.status(200).json({ message: 'Sesión cerrada exitosamente.' })
+    } catch (error) {
+      return res.status(500).json({ message: error.message })
+    }
+  }
+
+  static async logoutAllSessions (req, res) {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      return res.status(401).json({ message: 'No se proveyó el token de refresco.' })
+    }
+    try {
+      const { username } = jwt.verify(refreshToken, REFRESH_SECRET)
+      const deleteToken = await UserModel.deleteAllRefreshTokens({ username })
+
+      if (!deleteToken) {
+        return res.status(500).json({ message: 'Error al cerrar sesión' })
+      }
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: false, // true en producción
+        sameSite: 'Strict'
+      })
+      return res.status(200).json({ message: 'Sesión cerrada exitosamente.' })
+    } catch (error) {
+      return res.status(500).json({ message: error.message })
+    }
+  }
+
+  // TODO: combine both Logouts in single function
 }
