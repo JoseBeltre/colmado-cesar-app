@@ -1,14 +1,43 @@
-import { useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthUser } from '../hooks/useAuthUser'
+import { UserContext } from '../context/userContext'
+import { authService } from '../../services/authServices'
 
 export function ProtectedRoute ({ children }) {
   const navigate = useNavigate()
   const { isLogged } = useAuthUser()
+  const { user, setUser } = useContext(UserContext)
+
+  const hasRefreshed = useRef(false)
+
   useEffect(() => {
-    if (isLogged === false) {
-      navigate('auth/login')
+    const refreshToken = async () => {
+      if (!hasRefreshed.current) {
+        hasRefreshed.current = true
+        const refreshRes = await authService.refreshToken({ token: user.token })
+        if (!refreshRes.success) {
+          console.log('problema al refrescar el token')
+          return false
+        } else {
+          console.log('token refrescado: ', refreshRes.data)
+          setUser(refreshRes.data)
+          return true
+        }
+      }
     }
-  }, [navigate, isLogged])
+
+    const checkAuth = async () => {
+      if (isLogged === false) {
+        const wasRefreshed = await refreshToken()
+        if (wasRefreshed) return
+        navigate('/auth/login')
+      }
+    }
+    if (!hasRefreshed.current) {
+      checkAuth()
+    }
+  }, [navigate, isLogged, setUser, user])
+
   return children
 }

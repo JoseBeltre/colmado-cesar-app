@@ -164,7 +164,6 @@ export class AuthController {
 
   static async refreshToken (req, res) {
     const refreshToken = req.cookies.refreshToken
-
     if (!refreshToken) {
       return res.status(401).json({ message: 'No se proveyó el token de refresco.' })
     }
@@ -178,7 +177,7 @@ export class AuthController {
           secure: false, // true en producción
           sameSite: 'Strict'
         })
-        return res.status(401).json({ message: 'El token no existe.' })
+        return res.status(403).json({ message: 'El token no existe o es inválido.' })
       }
 
       const accessToken = jwt.sign(
@@ -187,7 +186,7 @@ export class AuthController {
           role
         },
         ACCESS_SECRET,
-        { expiresIn: '15m' }
+        { expiresIn: '15s' }
       )
 
       return res.status(200).json({ token: accessToken })
@@ -249,15 +248,11 @@ export class AuthController {
       const authHeader = req.headers.authorization
       const token = authHeader && authHeader.split(' ')[1]
 
-      console.log('Token recibido:', token)
-
       if (!token) {
         return res.status(401).json({ message: 'No se proveyó un token.' })
       }
 
       const decoded = jwt.verify(token, ACCESS_SECRET)
-
-      console.log('Token verificado correctamente:', decoded)
 
       return res.status(200).json({ message: 'Token válido.', user: decoded })
     } catch (err) {
