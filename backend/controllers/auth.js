@@ -244,5 +244,26 @@ export class AuthController {
     }
   }
 
+  static async verifyAccessToken (req, res) {
+    try {
+      const authHeader = req.headers.authorization
+      const token = authHeader && authHeader.split(' ')[1]
+
+      console.log('Token recibido:', token)
+
+      if (!token) {
+        return res.status(401).json({ message: 'No se proveyó un token.' })
+      }
+
+      const decoded = jwt.verify(token, ACCESS_SECRET)
+
+      console.log('Token verificado correctamente:', decoded)
+
+      return res.status(200).json({ message: 'Token válido.', user: decoded })
+    } catch (err) {
+      console.error('Error al verificar el token:', err)
+      return res.status(403).json({ message: 'Token inválido o expirado.' })
+    }
+  }
   // TODO: combine both Logouts in single function
 }

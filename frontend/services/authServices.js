@@ -76,5 +76,27 @@ export const authService = {
       console.error('Error en la petición:', error)
       return { success: false, message: error.message }
     }
+  },
+  verifyToken: async ({ token }) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/verify-token`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || `Error: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { success: true, data }
+    } catch (error) {
+      console.error('Error en la petición:', error)
+      return { success: false, message: error.message }
+    }
   }
 }
