@@ -1,17 +1,21 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Input } from '../../components/Input'
 import { InputPassword } from '../../components/InputPassword'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { authService } from '../../../services/authServices'
 import { Spinner } from '../../components/Spinner'
+import { UserContext } from '../../context/userContext'
 
 export function Login () {
+  const { setUser } = useContext(UserContext)
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -31,9 +35,11 @@ export function Login () {
       setIsLoading(false)
       return
     }
-    console.log(resultAPI.data)
+    setUser(resultAPI.data)
     setError('')
     setIsLoading(false)
+
+    navigate('/')
   }
   return (
     <form onSubmit={handleSubmit} className='grid gap-4'>

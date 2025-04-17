@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/JoseBeltre/colmado-cesar-app#readme",
   "devDependencies": {
-    "concurrently": "9.1.2"
+    "concurrently": "9.1.2",
+    "standard": "^17.1.2"
   }
 }

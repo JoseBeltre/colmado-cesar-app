@@ -6,6 +6,7 @@ import { Login } from './pages/auth/Login'
 import { Register } from './pages/auth/Register'
 import { AuthLayout } from './pages/auth/AuthLayout'
 import { AccountActivation } from './pages/auth/AccountActivation'
+import { UserProvider } from './context/userContext'
 
 const router = createBrowserRouter([
   {
@@ -32,5 +33,7 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router} />
+  <UserProvider>
+    <RouterProvider router={router} />
+  </UserProvider>
 )
