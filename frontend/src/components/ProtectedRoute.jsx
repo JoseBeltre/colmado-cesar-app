@@ -17,10 +17,8 @@ export function ProtectedRoute ({ children }) {
         hasRefreshed.current = true
         const refreshRes = await authService.refreshToken({ token: user.token })
         if (!refreshRes.success) {
-          console.log('problema al refrescar el token')
           return false
         } else {
-          console.log('token refrescado: ', refreshRes.data)
           setUser(refreshRes.data)
           return true
         }
