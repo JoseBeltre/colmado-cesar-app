@@ -3,30 +3,29 @@ import { authService } from '../../services/authServices'
 import { UserContext } from '../context/userContext'
 
 export function useAuthUser () {
-  const [isLogged, setIsLogged] = useState(null) // null = aún cargando
   const { user, setUser } = useContext(UserContext)
+  const [isLogged, setIsLogged] = useState(null)
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!user?.token) {
+    const handleAuth = async () => {
+      if (user?.token) {
+        const { success } = await authService.verifyToken({ token: user.token })
+        if (success) {
+          setIsLogged(true)
+          return
+        }
+      }
+
+      const { success, data } = await authService.refreshToken()
+      if (!success) {
         setIsLogged(false)
         return
       }
-
-      const resultAPI = await authService.verifyToken({ token: user.token })
-
-      if (!resultAPI.success) {
-        console.log(resultAPI.message)
-        setUser(null)
-        setIsLogged(false)
-        return
-      }
-
+      setUser(data)
       setIsLogged(true)
     }
-
-    fetchData()
-  }, [user?.token, setUser])
+    handleAuth()
+  }, [])
 
   return { isLogged }
 }
