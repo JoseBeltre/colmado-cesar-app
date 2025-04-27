@@ -7,12 +7,11 @@ import { Register } from './pages/auth/Register'
 import { AuthLayout } from './pages/auth/AuthLayout'
 import { AccountActivation } from './pages/auth/AccountActivation'
 import { UserProvider } from './context/userContext'
-import { ProtectedRoute } from './components/ProtectedRoute'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: (<ProtectedRoute><Home /></ProtectedRoute>)
+    element: <Home />
   },
   {
     path: '/auth',
