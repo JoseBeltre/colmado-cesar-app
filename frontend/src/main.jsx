@@ -7,6 +7,7 @@ import { Register } from './pages/auth/Register'
 import { AuthLayout } from './pages/auth/AuthLayout'
 import { AccountActivation } from './pages/auth/AccountActivation'
 import { UserProvider } from './context/userContext'
+import { Carton } from './pages/Carton'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: '/auth/deny',
     element: <AccountActivation action='deny' />
+  },
+  {
+    path: '/carton',
+    element: <Carton />
   }
 ])
 
