@@ -36,14 +36,14 @@ export function Home () {
         <Logotipo width='100%' height='100%' fill={isDark ? '#fff' : '#327CEC'} />
       </header>
       <main className='px-5 flex flex-col gap-4'>
-        <section className='bg-white/10 p-4 rounded-xl border border-white/20'>
+        <section className='bg-white dark:bg-white/10 p-4 rounded-xl border border-[#C7C7C7] dark:border-white/20'>
           <div className='mb-3'>
             <p className='font-extralight leading-4'>Monto mes en curso</p>
-            <h2 className='text-4xl text-white'>$240,000</h2>
+            <h2 className='text-4xl dark:text-white'>$240,000</h2>
           </div>
           <div>
             <p className='font-extralight leading-4'>Cierre del día anterior</p>
-            <h2 className='text-4xl text-white'>$42,050</h2>
+            <h2 className='text-4xl dark:text-white'>$42,050</h2>
           </div>
         </section>
         <section className='flex flex-col gap-4'>
