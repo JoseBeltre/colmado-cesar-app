@@ -8,6 +8,7 @@ import { AuthLayout } from './pages/auth/AuthLayout'
 import { AccountActivation } from './pages/auth/AccountActivation'
 import { UserProvider } from './context/userContext'
 import { Carton } from './pages/Carton'
+import { Clients } from './pages/Clients'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: '/carton',
     element: <Carton />
+  },
+  {
+    path: '/clientes',
+    element: <Clients />
   }
 ])
 
