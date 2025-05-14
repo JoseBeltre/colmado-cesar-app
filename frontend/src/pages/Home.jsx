@@ -1,29 +1,29 @@
 import { useProtectedRoute } from '../hooks/useProtectedRoute'
 import Logotipo from '../components/Logotipo'
 import { useDarkMode } from '../hooks/useDarkMode'
-import { ChartColumn, ClipboardList, NotebookTabs, UserRound } from 'lucide-react'
+import { ChartPie, ClipboardList, NotebookTabs, UserIcon } from 'lucide-react'
 import { MenuItem } from '../components/MenuItem'
 
 const links = [
   {
     text: 'El Cartón',
     to: '/carton',
-    icon: <NotebookTabs className='absolute -top-4 inherit' width='60px' height='80px' />
-  },
-  {
-    text: 'Historial',
-    to: '/historial',
-    icon: <UserRound className='absolute -top-4 inherit' width='60px' height='80px' />
+    icon: <NotebookTabs className='absolute -top-5 inherit' width='60px' height='80px' />
   },
   {
     text: 'Clientes',
     to: '/clientes',
-    icon: <ClipboardList className='absolute -top-4 inherit' width='60px' height='80px' />
+    icon: <UserIcon className='absolute -top-5 inherit' width='60px' height='80px' />
+  },
+  {
+    text: 'Historial',
+    to: '/historial',
+    icon: <ClipboardList className='absolute -top-5 inherit' width='60px' height='80px' />
   },
   {
     text: 'Crear reporte',
     to: '/reporte',
-    icon: <ChartColumn className='absolute -top-4 inherit' width='60px' height='80px' />
+    icon: <ChartPie className='absolute -top-5 inherit' width='60px' height='80px' />
   }
 ]
 
