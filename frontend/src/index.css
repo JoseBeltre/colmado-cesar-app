@@ -17,3 +17,9 @@
   --breakpoint-xs: 300px;
 
 }
+
+@layer components {
+  .theme-container {
+    @apply bg-white rounded-2xl border-1 border-[#C7C7C7] dark:bg-[#2b2929] dark:border-white/20 p-2;
+  }
+}
