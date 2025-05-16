@@ -1,4 +1,4 @@
-import { UserSearch } from 'lucide-react'
+import { UserPlus, UserSearch } from 'lucide-react'
 import { NavHeader } from '../components/NavHeader'
 import { useState } from 'react'
 import { ClientInfoModal } from '../components/ClientInfoModal'
@@ -9,6 +9,9 @@ export function Clients () {
     <>
       <NavHeader>
         Clientes
+        <button className='text-primary bg-white p-1.5 rounded-md ms-auto'>
+          <UserPlus size={20} />
+        </button>
       </NavHeader>
       <main className='p-3 grid gap-2'>
         <header>
