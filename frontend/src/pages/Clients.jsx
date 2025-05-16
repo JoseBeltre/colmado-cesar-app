@@ -3,6 +3,7 @@ import { NavHeader } from '../components/NavHeader'
 import { useState } from 'react'
 import { ClientInfoModal } from '../components/ClientInfoModal'
 import { ClientItem } from '../components/ClientItem'
+import { clients } from '../../mocks/clients'
 export function Clients () {
   const [isClientInfoModalOpen, setIsClientInfoModalOpen] = useState(false)
   return (
@@ -25,7 +26,20 @@ export function Clients () {
           </div>
         </header>
         <div className='grid gap-2'>
-          <ClientItem onClick={() => setIsClientInfoModalOpen(!isClientInfoModalOpen)} />
+          {
+            clients.map(client => {
+              return (
+                <ClientItem
+                  key={client.id}
+                  firstName={client.firstName}
+                  lastName={client.lastName}
+                  aka={client.aka}
+                  balance={client.balance}
+                  onClick={() => setIsClientInfoModalOpen(!isClientInfoModalOpen)}
+                />
+              )
+            })
+          }
         </div>
         {
           isClientInfoModalOpen &&
