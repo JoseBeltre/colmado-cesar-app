@@ -6,6 +6,12 @@ import { ClientItem } from '../components/ClientItem'
 import { clients } from '../../mocks/clients'
 export function Clients () {
   const [isClientInfoModalOpen, setIsClientInfoModalOpen] = useState(false)
+  const [selectedClient, setSelectedClient] = useState(null)
+
+  const handleClientInfoModal = (client) => {
+    setSelectedClient(client)
+    setIsClientInfoModalOpen(!isClientInfoModalOpen)
+  }
   return (
     <>
       <NavHeader>
@@ -35,7 +41,7 @@ export function Clients () {
                   lastName={client.lastName}
                   aka={client.aka}
                   balance={client.balance}
-                  onClick={() => setIsClientInfoModalOpen(!isClientInfoModalOpen)}
+                  onClick={() => handleClientInfoModal(client)}
                 />
               )
             })
@@ -43,7 +49,7 @@ export function Clients () {
         </div>
         {
           isClientInfoModalOpen &&
-            <ClientInfoModal closeModal={() => setIsClientInfoModalOpen(!isClientInfoModalOpen)} />
+            <ClientInfoModal closeModal={() => handleClientInfoModal(null)} client={selectedClient} />
         }
       </main>
     </>

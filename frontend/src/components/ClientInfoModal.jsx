@@ -1,8 +1,30 @@
 import { CircleDollarSign, ClipboardList, UserMinus, UserPenIcon, X } from 'lucide-react'
 import { BackgroundModal } from './BackgroundModal'
 import { Button } from './Button'
+import { formatCurrency, formatDatetimeFromMySQL } from '../utils/utils'
 
-export function ClientInfoModal ({ closeModal }) {
+export function ClientInfoModal ({ closeModal, client }) {
+  const formattedBalance = formatCurrency(client.balance)
+  const formattedCreatedAt = formatDatetimeFromMySQL(client.createdAt)
+  const getClientDebtState = () => {
+    if (client.balance === 0) {
+      return <p className='text-end'>Sin deuda</p>
+    } else if (client.balance > 0) {
+      return <p className='text-end text-success font-semibold'>Con dinero</p>
+    } else {
+      return <p className='text-end text-secondary font-semibold'>Deuda pendiente</p>
+    }
+  }
+  const getClientBalance = () => {
+    if (client.balance === 0) {
+      return ''
+    } else if (client.balance > 0) {
+      return <p className='text-end text-success font-semibold'>{formattedBalance}</p>
+    } else {
+      return <p className='text-end text-secondary font-semibold'>{formattedBalance}</p>
+    }
+  }
+
   return (
     <BackgroundModal closeModal={closeModal}>
       <div className='theme-container w-full max-w-2xl p-0 overflow-hidden border-none z-50'>
@@ -12,18 +34,29 @@ export function ClientInfoModal ({ closeModal }) {
         </header>
         <div className='grid gap-5 p-3'>
           <div className='border-b py-2'>
-            <h2 className='text-black dark:text-white text-2xl leading-5'>Tata</h2>
-            <p className='leading-5'>Maria Ortega Cardenal</p>
+            <h2 className='text-black dark:text-white text-2xl leading-5'>{client.aka}</h2>
+            <p className='leading-5'>{client.firstName + ' ' + client.lastName}</p>
           </div>
           <div className='grid grid-cols-2 leading-4 gap-2'>
-            <p className='font-semibold dark:font-medium text-black dark:text-white'>Estado</p><p className='text-end text-secondary'>Deuda pendiente</p>
-            <p className='font-semibold dark:font-medium text-black dark:text-white'>Monto de deuda</p><p className='text-end text-secondary'>$300</p>
-            <p className='font-semibold dark:font-medium text-black dark:text-white'>Numero telefónico</p><a className='text-end' href='tel:8297420323'>8297420323</a>
-            <p className='font-semibold dark:font-medium text-black dark:text-white'>Dirección</p><p className='text-end'>Calle Los Rosales, Santo Domingo Este</p>
+            <p className='font-semibold dark:font-medium text-black dark:text-white'>Estado</p>
+            {getClientDebtState()}
+            {
+              client.balance !== 0 &&
+                <p className='font-semibold dark:font-medium text-black dark:text-white'>Monto de deuda</p>
+            }
+            {getClientBalance()}
+            <p className='font-semibold dark:font-medium text-black dark:text-white'>Numero telefónico</p>
+            {
+              client.phoneNumber !== null
+                ? <a className='text-end' href={`tel:${client.phoneNumber}`}>{client.phoneNumber}</a>
+                : <p className='text-end'>No registrado</p>
+            }
+            <p className='font-semibold dark:font-medium text-black dark:text-white'>Dirección</p>
+            <p className='text-end'>{client.address !== null ? client.address : 'No registrada'}</p>
           </div>
           <div className='leading-4'>
-            <p>Registrado el <span className='font-semibold dark:font-medium text-black dark:text-white'>5/5/2023</span></p>
-            <p>Registrado por <span className='font-semibold dark:font-medium text-black dark:text-white'>Nelson Gonzalez</span></p>
+            <p>Registrado el <span className='font-semibold dark:font-medium text-black dark:text-white'>{formattedCreatedAt}</span></p>
+            <p>Registrado por <span className='font-semibold dark:font-medium text-black dark:text-white'>{client.createdBy}</span></p>
           </div>
           <div className='grid grid-cols-2 gap-2'>
             <Button className='bg-white text-black border border-black col-span-2 font-semibold'>
