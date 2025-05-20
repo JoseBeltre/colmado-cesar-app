@@ -4,9 +4,12 @@ import { useState } from 'react'
 import { ClientInfoModal } from '../components/ClientInfoModal'
 import { ClientItem } from '../components/ClientItem'
 import { clients } from '../../mocks/clients'
+import { AddClientModal } from '../components/AddClientModal'
+import { Button } from '../components/Button'
 export function Clients () {
   const [isClientInfoModalOpen, setIsClientInfoModalOpen] = useState(false)
   const [selectedClient, setSelectedClient] = useState(null)
+  const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false)
 
   const handleClientInfoModal = (client) => {
     setSelectedClient(client)
@@ -16,9 +19,9 @@ export function Clients () {
     <>
       <NavHeader>
         Clientes
-        <button className='text-primary bg-white p-1.5 rounded-md ms-auto'>
+        <Button onClick={() => setIsAddClientModalOpen(!isAddClientModalOpen)} className='text-primary bg-white rounded-md ms-auto flex-none p-1.5'>
           <UserPlus size={20} />
-        </button>
+        </Button>
       </NavHeader>
       <main className='p-3 grid gap-2'>
         <header>
@@ -50,6 +53,10 @@ export function Clients () {
         {
           isClientInfoModalOpen &&
             <ClientInfoModal closeModal={() => handleClientInfoModal(null)} client={selectedClient} />
+        }
+        {
+          isAddClientModalOpen &&
+            <AddClientModal closeModal={() => setIsAddClientModalOpen(!isAddClientModalOpen)} />
         }
       </main>
     </>
