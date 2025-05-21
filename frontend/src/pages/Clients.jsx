@@ -1,10 +1,10 @@
 import { UserPlus, UserSearch } from 'lucide-react'
 import { NavHeader } from '../components/NavHeader'
 import { useState } from 'react'
-import { ClientInfoModal } from '../components/ClientInfoModal'
+import { ClientInfoModal } from '../components/modals/ClientInfoModal'
 import { ClientItem } from '../components/ClientItem'
 import { clients } from '../../mocks/clients'
-import { ClientModal } from '../components/ClientModal'
+import { ClientModal } from '../components/modals/ClientModal'
 import { Button } from '../components/Button'
 export function Clients () {
   const [isClientInfoModalOpen, setIsClientInfoModalOpen] = useState(false)

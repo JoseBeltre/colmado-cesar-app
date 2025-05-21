@@ -1,7 +1,7 @@
 import { CircleDollarSign, ClipboardList, UserMinus, UserPenIcon, X } from 'lucide-react'
 import { BackgroundModal } from './BackgroundModal'
-import { Button } from './Button'
-import { formatCurrency, formatDatetimeFromMySQL } from '../utils/utils'
+import { Button } from '../Button'
+import { formatCurrency, formatDatetimeFromMySQL } from '../../utils/utils'
 
 export function ClientInfoModal ({ closeModal, client, openEdit }) {
   const formattedBalance = formatCurrency(client.balance)

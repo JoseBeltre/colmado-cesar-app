@@ -1,7 +1,7 @@
 import { Save } from 'lucide-react'
 import { BackgroundModal } from './BackgroundModal'
-import { Button } from './Button'
-import { Input } from './Input'
+import { Button } from '../Button'
+import { Input } from '../Input'
 import { useEffect, useState } from 'react'
 
 export function ClientModal ({ closeModal, action = 'add', client }) {
