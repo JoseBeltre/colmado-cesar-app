@@ -3,7 +3,7 @@ import { BackgroundModal } from './BackgroundModal'
 import { Button } from './Button'
 import { formatCurrency, formatDatetimeFromMySQL } from '../utils/utils'
 
-export function ClientInfoModal ({ closeModal, client }) {
+export function ClientInfoModal ({ closeModal, client, openEdit }) {
   const formattedBalance = formatCurrency(client.balance)
   const formattedCreatedAt = formatDatetimeFromMySQL(client.createdAt)
   const getClientDebtState = () => {
@@ -71,7 +71,7 @@ export function ClientInfoModal ({ closeModal, client }) {
               <UserMinus size={20} />
               Eliminar cliente
             </Button>
-            <Button className=' text-white'>
+            <Button className='text-white' onClick={openEdit}>
               <UserPenIcon size={20} />
               Editar Información
             </Button>
