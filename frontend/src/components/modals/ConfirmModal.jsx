@@ -4,7 +4,7 @@ import { BackgroundModal } from './BackgroundModal'
 export function ConfirmModal ({ closeModal, onConfirm, title, confirmText = 'Confirmar', children }) {
   return (
     <BackgroundModal closeModal={closeModal}>
-      <div className='theme-container grid gap-3 p-0'>
+      <div className='theme-container grid gap-3 p-0 overflow-hidden '>
         <header className='flex justify-between items-center bg-primary dark:bg-white/10 font-bold dark:font-medium text-white p-3 py-1 pt-2'>
           <h2>{title}</h2>
         </header>
