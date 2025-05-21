@@ -10,7 +10,6 @@ export function Clients () {
   const [isClientInfoModalOpen, setIsClientInfoModalOpen] = useState(false)
   const [selectedClient, setSelectedClient] = useState(null)
   const [isAddClientModalOpen, setIsAddClientModalOpen] = useState(false)
-  const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false)
 
   const handleClientInfoModal = (client) => {
     setSelectedClient(client)
@@ -53,15 +52,11 @@ export function Clients () {
         </div>
         {
           isClientInfoModalOpen &&
-            <ClientInfoModal closeModal={() => handleClientInfoModal(null)} client={selectedClient} openEdit={() => setIsEditClientModalOpen(!isEditClientModalOpen)} />
+            <ClientInfoModal closeModal={() => handleClientInfoModal(null)} client={selectedClient} />
         }
         {
           isAddClientModalOpen &&
             <ClientModal closeModal={() => setIsAddClientModalOpen(!isAddClientModalOpen)} />
-        }
-        {
-          isEditClientModalOpen &&
-            <ClientModal closeModal={() => setIsEditClientModalOpen(!isEditClientModalOpen)} action='edit' client={selectedClient} />
         }
       </main>z
     </>

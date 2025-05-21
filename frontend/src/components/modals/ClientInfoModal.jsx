@@ -2,10 +2,15 @@ import { CircleDollarSign, ClipboardList, UserMinus, UserPenIcon, X } from 'luci
 import { BackgroundModal } from './BackgroundModal'
 import { Button } from '../Button'
 import { formatCurrency, formatDatetimeFromMySQL } from '../../utils/utils'
+import { useState } from 'react'
+import { ClientModal } from './ClientModal'
+import { ConfirmModal } from './ConfirmModal'
 
-export function ClientInfoModal ({ closeModal, client, openEdit }) {
+export function ClientInfoModal ({ closeModal, client }) {
   const formattedBalance = formatCurrency(client.balance)
   const formattedCreatedAt = formatDatetimeFromMySQL(client.createdAt)
+  const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false)
+  const [isDeleteClientModalOpen, setIsDeleteClientModalOpen] = useState(false)
   const getClientDebtState = () => {
     if (client.balance === 0) {
       return <p className='text-end'>Sin deuda</p>
@@ -67,17 +72,32 @@ export function ClientInfoModal ({ closeModal, client, openEdit }) {
               <CircleDollarSign size={20} />
               Sumar pago
             </Button>
-            <Button className='bg-secondary text-white'>
+            <Button onClick={() => setIsDeleteClientModalOpen(!isDeleteClientModalOpen)} className='bg-secondary text-white'>
               <UserMinus size={20} />
               Eliminar cliente
             </Button>
-            <Button className='text-white' onClick={openEdit}>
+            <Button className='text-white' onClick={() => setIsEditClientModalOpen(!isEditClientModalOpen)}>
               <UserPenIcon size={20} />
               Editar Información
             </Button>
           </div>
         </div>
       </div>
+      {
+        isEditClientModalOpen &&
+          <ClientModal closeModal={() => setIsEditClientModalOpen(!isEditClientModalOpen)} action='edit' client={client} />
+      }
+      {
+        isDeleteClientModalOpen &&
+          <ConfirmModal
+            closeModal={() => setIsDeleteClientModalOpen(!isDeleteClientModalOpen)}
+            client={client}
+            title={`Eliminar a ${client.firstName}`}
+            confirmText='Si, estoy seguro'
+          >
+            ¿Está seguro que desea eliminar a <span className='font-semibold'>{client.firstName + ' ' + client.lastName}</span>? Esta acción es irreversible.
+          </ConfirmModal>
+      }
     </BackgroundModal>
   )
 }
