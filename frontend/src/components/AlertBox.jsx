@@ -1,5 +1,5 @@
 import { CircleCheckBig, CircleX, TriangleAlert } from 'lucide-react'
-import { BackgroundModal } from './BackgroundModal'
+import { BackgroundModal } from './modals/BackgroundModal'
 
 export function AlertBox ({ type = 'success', closeModal, children }) {
   const ALERT_STYLES = {
