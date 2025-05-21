@@ -10,7 +10,7 @@ export function ClientItem ({ firstName, lastName, aka, balance = 0, onClick }) 
     <div onClick={onClick} className='theme-container px-3 py-4 flex justify-between items-center cursor-pointer'>
       <div className=''>
         <h5 className='text-black dark:text-white text-lg leading-4'>{fullName}</h5>
-        <h6 className='text-black dark:text-white/50 leading-4'>{aka}</h6>
+        <h6 className='text-black/50 dark:text-white/50 leading-4'>{aka}</h6>
       </div>
       {
         balance >= 0

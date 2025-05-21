@@ -5,12 +5,14 @@ import { formatCurrency, formatDatetimeFromMySQL } from '../../utils/utils'
 import { useState } from 'react'
 import { ClientModal } from './ClientModal'
 import { ConfirmModal } from './ConfirmModal'
+import { SumPaymentModal } from './SumPaymentModal'
 
 export function ClientInfoModal ({ closeModal, client }) {
   const formattedBalance = formatCurrency(client.balance)
   const formattedCreatedAt = formatDatetimeFromMySQL(client.createdAt)
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false)
   const [isDeleteClientModalOpen, setIsDeleteClientModalOpen] = useState(false)
+  const [isSumPaymentModalOpen, setIsSumPaymentModalOpen] = useState(false)
   const getClientDebtState = () => {
     if (client.balance === 0) {
       return <p className='text-end'>Sin deuda</p>
@@ -32,7 +34,7 @@ export function ClientInfoModal ({ closeModal, client }) {
 
   return (
     <BackgroundModal closeModal={closeModal}>
-      <div className='theme-container w-full max-w-2xl p-0 overflow-hidden border-none z-50'>
+      <div className='theme-container w-full md:w-md p-0 overflow-hidden border-none z-50'>
         <header className='flex justify-between items-center bg-primary dark:bg-white/10 font-bold dark:font-medium text-white p-3 py-1 pt-2'>
           <h5>Información del cliente</h5>
           <X className='cursor-pointer' onClick={closeModal} />
@@ -68,7 +70,7 @@ export function ClientInfoModal ({ closeModal, client }) {
               <ClipboardList size={20} />
               Ver historial del cliente
             </Button>
-            <Button className='bg-success col-span-2 text-white'>
+            <Button onClick={() => setIsSumPaymentModalOpen(!isSumPaymentModalOpen)} className='bg-success col-span-2 text-white'>
               <CircleDollarSign size={20} />
               Sumar pago
             </Button>
@@ -90,13 +92,17 @@ export function ClientInfoModal ({ closeModal, client }) {
       {
         isDeleteClientModalOpen &&
           <ConfirmModal
-            closeModal={() => setIsDeleteClientModalOpen(!isDeleteClientModalOpen)}
+            onCancel={() => setIsDeleteClientModalOpen(!isDeleteClientModalOpen)}
             client={client}
             title={`Eliminar a ${client.firstName}`}
             confirmText='Si, estoy seguro'
           >
             ¿Está seguro que desea eliminar a <span className='font-semibold'>{client.firstName + ' ' + client.lastName}</span>? Esta acción es irreversible.
           </ConfirmModal>
+      }
+      {
+        isSumPaymentModalOpen &&
+          <SumPaymentModal client={client} closeModal={() => setIsSumPaymentModalOpen(!isSumPaymentModalOpen)} />
       }
     </BackgroundModal>
   )
