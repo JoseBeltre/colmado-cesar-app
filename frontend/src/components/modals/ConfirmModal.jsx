@@ -15,7 +15,7 @@ export function ConfirmModal ({ closeModal, onConfirm, title, confirmText = 'Con
           <Button onClick={closeModal} className='bg-transparent text-secondary underline flex-none'>
             Cancelar
           </Button>
-          <Button onClick={onConfirm} className='bg-success flex-none p-3 font-bold dark:text-white'>
+          <Button onClick={onConfirm} className='bg-success flex-none p-3 font-bold text-white'>
             {confirmText}
           </Button>
         </footer>

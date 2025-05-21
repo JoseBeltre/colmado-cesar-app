@@ -85,7 +85,7 @@ export function ClientModal ({ closeModal, action = 'add', client }) {
           <Button onClick={closeModal} className='bg-transparent text-secondary underline flex-none'>
             Cancelar
           </Button>
-          <Button className='bg-success flex-none px-6 font-bold dark:text-white'>
+          <Button className='bg-success flex-none px-6 font-bold text-white'>
             <Save size={20} />
             Guardar
           </Button>
