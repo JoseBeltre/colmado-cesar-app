@@ -6,8 +6,10 @@ import { useState } from 'react'
 import { ClientModal } from './ClientModal'
 import { ConfirmModal } from './ConfirmModal'
 import { SumPaymentModal } from './SumPaymentModal'
+import { useNavigate } from 'react-router-dom'
 
 export function ClientInfoModal ({ closeModal, client }) {
+  const navigate = useNavigate()
   const formattedBalance = formatCurrency(client.balance)
   const formattedCreatedAt = formatDatetimeFromMySQL(client.createdAt)
   const [isEditClientModalOpen, setIsEditClientModalOpen] = useState(false)
@@ -66,7 +68,7 @@ export function ClientInfoModal ({ closeModal, client }) {
             <p>Registrado por <span className='font-semibold dark:font-medium text-black dark:text-white'>{client.createdBy}</span></p>
           </div>
           <div className='grid grid-cols-2 gap-2'>
-            <Button className='bg-white text-black border border-black col-span-2 font-semibold'>
+            <Button onClick={() => navigate(`/clientes/${client.id}/historial`)} className='bg-white text-black border border-black col-span-2 font-semibold'>
               <ClipboardList size={20} />
               Ver historial del cliente
             </Button>

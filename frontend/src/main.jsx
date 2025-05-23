@@ -9,6 +9,7 @@ import { AccountActivation } from './pages/auth/AccountActivation'
 import { UserProvider } from './context/userContext'
 import { Carton } from './pages/Carton'
 import { Clients } from './pages/Clients'
+import { ClientHistory } from './pages/ClientHistory'
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: '/clientes',
     element: <Clients />
+  },
+  {
+    path: '/clientes/:id/historial',
+    element: <ClientHistory />
   }
 ])
 
