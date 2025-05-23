@@ -8,7 +8,7 @@ export function ClientHistory () {
   const client = clients[id]
   return (
     <>
-      <NavHeader>
+      <NavHeader link='/clientes'>
         Historial de {client.firstName}
       </NavHeader>
       <main className='p-3 grid gap-2'>
