@@ -1,9 +1,7 @@
-import mysql from 'mysql2/promise'
 import bcrypt from 'bcrypt'
-import { DB_CONFIG, SALT_ROUNDS } from '../config.js'
+import { SALT_ROUNDS } from '../config.js'
 import { generateUsername } from '../utils/generateUsername.js'
-
-const conn = await mysql.createConnection(DB_CONFIG)
+import { conn } from '../utils/db.js'
 
 export class UserModel {
   static async create ({ user }) {
