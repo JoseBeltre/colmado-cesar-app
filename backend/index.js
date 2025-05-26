@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { authRouter } from './routes/auth.js'
 import { PORT } from './config.js'
+import { clientsRouter } from './routes/clients.js'
 const app = express()
 
 app.use(cors({
@@ -21,6 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth', authRouter)
+app.use('/clients', clientsRouter)
 
 app.listen(PORT, () => {
   console.log(`SERVER LISTENING ON PORT http://localhost:${PORT}`)
