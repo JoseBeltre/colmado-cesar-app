@@ -7,8 +7,20 @@ export class ClientsController {
       console.log(clients)
       return res.status(200).json(clients)
     } catch (error) {
-      console.log(error)
-      return res.status(401).json({ message: error.message })
+      return res.status(400).json({ message: error.message })
+    }
+  }
+
+  static async getOne (req, res) {
+    const { id } = req.params
+    try {
+      if (!id) {
+        return res.status(400).json({ message: 'No se proveyó el id del usuario.' })
+      }
+      const client = await ClientsModel.getOne({ id })
+      return res.status(200).json(client)
+    } catch (error) {
+      return res.status(400).json({ message: error.message })
     }
   }
 }
