@@ -16,6 +16,8 @@ export class ClientsController {
     try {
       if (!id) {
         return res.status(400).json({ message: 'No se proveyó el id del usuario.' })
+      } else if (typeof id !== 'number') {
+        return res.status(400).json({ message: 'Provea un id válido.' })
       }
       const client = await ClientsModel.getOne({ id })
       return res.status(200).json(client)
