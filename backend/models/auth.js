@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 import { SALT_ROUNDS } from '../config.js'
 import { generateUsername } from '../utils/generateUsername.js'
 import { conn } from '../utils/db.js'
+import { ConflictError, ForbiddenError, NotFoundError, UnauthorizedError } from '../utils/errors.js'
 
 export class UserModel {
   static async create ({ user }) {
@@ -10,19 +11,19 @@ export class UserModel {
 
     const userExists = await UserModel.getOne({ camp: 'username', value: username })
     if (userExists !== null) {
-      throw new Error('El usuario ya existe.')
+      throw new ConflictError('El usuario ya existe.')
     }
 
     const emailExists = await UserModel.getOne({ camp: 'email', value: email })
     if (emailExists !== null) {
-      throw new Error('El email ya existe.')
+      throw new ConflictError('El email ya existe.')
     }
 
     const hashedPassword = await bcrypt.hash(password, parseInt(SALT_ROUNDS))
 
     const [rows] = await conn.query('SELECT id FROM roles WHERE role = ?', [role])
     if (rows.length <= 0) {
-      throw new Error('El rol especificado parece no existir.')
+      throw new NotFoundError('El rol especificado parece no existir.')
     }
     const roleId = rows[0].id
 
@@ -56,13 +57,15 @@ export class UserModel {
 
   static async login ({ username, password }) {
     const user = await UserModel.getOne({ camp: 'username', value: username })
-    if (!user || !user.activated) {
-      throw new Error('El usuario no existe o no ha sido activado.')
+    if (!user) {
+      throw new NotFoundError('El usuario no existe.')
+    } else if (!user.activated) {
+      throw new ForbiddenError('El usuario no ha sido activado.')
     }
 
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-      throw new Error('Contraseña incorrecta')
+      throw new UnauthorizedError('Credenciales incorrectas.')
     }
 
     return user
