@@ -13,10 +13,11 @@ export class ClientsController {
 
   static async getOne (req, res) {
     const { id } = req.params
+    const numericId = Number(id)
     try {
       if (!id) {
         return res.status(400).json({ message: 'No se proveyó el id del usuario.' })
-      } else if (typeof id !== 'number') {
+      } else if (isNaN(numericId)) {
         return res.status(400).json({ message: 'Provea un id válido.' })
       }
       const client = await ClientsModel.getOne({ id })
