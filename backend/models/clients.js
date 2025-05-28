@@ -1,4 +1,5 @@
 import { conn } from '../utils/db.js'
+import { NotFoundError } from '../utils/errors.js'
 export class ClientsModel {
   static async getAll () {
     const [result] = await conn.query(
@@ -28,7 +29,7 @@ export class ClientsModel {
       WHERE id = ? `, id)
 
     if (client.length === 0) {
-      throw new Error('Este cliente no existe.')
+      throw new NotFoundError('Este cliente no existe.')
     }
     return client[0]
   }

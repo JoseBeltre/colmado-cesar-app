@@ -1,13 +1,13 @@
 import { ClientsModel } from '../models/clients.js'
+import { BadRequestError, errorHandler } from '../utils/errors.js'
 
 export class ClientsController {
   static async getAll (req, res) {
     try {
       const clients = await ClientsModel.getAll()
-      console.log(clients)
       return res.status(200).json(clients)
     } catch (error) {
-      return res.status(400).json({ message: error.message })
+      errorHandler(res, error)
     }
   }
 
@@ -15,15 +15,13 @@ export class ClientsController {
     const { id } = req.params
     const numericId = Number(id)
     try {
-      if (!id) {
-        return res.status(400).json({ message: 'No se proveyó el id del usuario.' })
-      } else if (isNaN(numericId)) {
-        return res.status(400).json({ message: 'Provea un id válido.' })
+      if (isNaN(numericId)) {
+        throw new BadRequestError('ID inválido.')
       }
       const client = await ClientsModel.getOne({ id })
       return res.status(200).json(client)
     } catch (error) {
-      return res.status(400).json({ message: error.message })
+      errorHandler(res, error)
     }
   }
 }
