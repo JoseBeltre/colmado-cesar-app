@@ -3,7 +3,12 @@ import { BadRequestError, errorHandler } from '../utils/errors.js'
 
 export class ClientsController {
   static async getAll (req, res) {
+    const { name } = req.query
     try {
+      if (name) {
+        const clients = await ClientsModel.getAll({ name })
+        return res.status(200).json(clients)
+      }
       const clients = await ClientsModel.getAll()
       return res.status(200).json(clients)
     } catch (error) {
