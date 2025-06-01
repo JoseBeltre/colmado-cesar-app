@@ -5,3 +5,4 @@ export const clientsRouter = Router()
 
 clientsRouter.get('/', ClientsController.getAll)
 clientsRouter.get('/:id', ClientsController.getOne)
+clientsRouter.delete('/:id', ClientsController.delete)

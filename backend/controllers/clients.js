@@ -29,4 +29,18 @@ export class ClientsController {
       errorHandler(res, error)
     }
   }
+
+  static async delete (req, res) {
+    const { id } = req.params
+    if (!id) throw new BadRequestError('No se proveyó el ID de usuario.')
+    try {
+      const wasDeleted = await ClientsModel.delete({ id })
+      if (!wasDeleted) {
+        throw new Error('Error al eliminar el cliente.')
+      }
+      return res.status(200).json({ message: 'cliente eliminado correctamente.' })
+    } catch (error) {
+      errorHandler(res, error)
+    }
+  }
 }

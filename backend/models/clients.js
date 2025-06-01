@@ -44,4 +44,13 @@ export class ClientsModel {
     }
     return client[0]
   }
+
+  static async delete ({ id }) {
+    await this.getOne({ id })
+    const [result] = await conn.query('DELETE FROM clients WHERE id = ?', id)
+    if (result.affectedRows === 0) {
+      throw new Error('Error al eliminar el cliente.')
+    }
+    return true
+  }
 }
