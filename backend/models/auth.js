@@ -113,24 +113,29 @@ export class UserModel {
       throw new Error('Campo no permitido.')
     }
 
-    camp = `e.${camp}`
+    let whereClause = ''
+    if (camp === 'id') {
+      whereClause = 'e.id = UUID_TO_BIN(?)'
+    } else {
+      whereClause = `e.${camp} = ?`
+    }
 
     const [result] = await conn.query(`
-      SELECT 
-        BIN_TO_UUID(e.id) AS id, 
-        e.first_name, 
-        e.last_name, 
-        r.role AS role, 
-        e.username, 
-        e.email, 
-        e.phone_number, 
-        e.password,
-        e.created_at, 
-        e.activated
-      FROM employees e
-      JOIN roles r ON e.role_id = r.id
-      WHERE ?? = ?
-    `, [camp, value])
+    SELECT 
+      BIN_TO_UUID(e.id) AS id, 
+      e.first_name, 
+      e.last_name, 
+      r.role AS role, 
+      e.username, 
+      e.email, 
+      e.phone_number, 
+      e.password,
+      e.created_at, 
+      e.activated
+    FROM employees e
+    JOIN roles r ON e.role_id = r.id
+    WHERE ${whereClause}
+  `, [value])
 
     if (result.length === 0) return null
 
