@@ -1,4 +1,6 @@
+import { UserModel } from '../models/auth.js'
 import { ClientsModel } from '../models/clients.js'
+import { validateClient } from '../schemas/client.js'
 import { BadRequestError, errorHandler } from '../utils/errors.js'
 
 export class ClientsController {
@@ -25,6 +27,36 @@ export class ClientsController {
       }
       const client = await ClientsModel.getOne({ id })
       return res.status(200).json(client)
+    } catch (error) {
+      errorHandler(res, error)
+    }
+  }
+
+  static async create (req, res) {
+    try {
+      const result = validateClient(req.body)
+      if (!result.success) {
+        throw new BadRequestError(result.error.message)
+      }
+
+      const clientExists = await ClientsModel.existsByNameOrAka({
+        firstName: result.data.firstName,
+        lastName: result.data.lastName,
+        aka: result.data.aka
+      })
+
+      if (clientExists) {
+        throw new BadRequestError('El cliente ya existe.')
+      }
+
+      const employeeExists = await UserModel.getOne({ camp: 'id', value: req.body.employeeId })
+      console.log(employeeExists)
+      if (!employeeExists) {
+        throw new BadRequestError('El empleado especificado no existe.')
+      }
+
+      const newClient = await ClientsModel.create({ client: result.data })
+      return res.status(201).json(newClient)
     } catch (error) {
       errorHandler(res, error)
     }

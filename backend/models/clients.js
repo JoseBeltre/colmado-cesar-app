@@ -45,6 +45,26 @@ export class ClientsModel {
     return client[0]
   }
 
+  static async existsByNameOrAka ({ firstName, lastName, aka }) {
+    const [rows] = await conn.query(`
+      SELECT 1 FROM clients 
+      WHERE (LOWER(first_name) = LOWER(?) AND LOWER(last_name) = LOWER(?)) OR LOWER(aka) = LOWER(?)
+      LIMIT 1
+    `, [firstName, lastName, aka])
+
+    return rows.length > 0
+  }
+
+  static async create ({ client }) {
+    const { firstName, lastName, aka, phoneNumber, address, employeeId } = client
+    const [result] = await conn.query(`
+      INSERT INTO clients (first_name, last_name, aka, phone_number, address, employee_id)
+      VALUES (?, ?, ?, ?, ?, UUID_TO_BIN(?))
+      `, [firstName, lastName, aka, phoneNumber, address, employeeId])
+    const newClient = this.getOne({ id: result.insertId })
+    return newClient
+  }
+
   static async delete ({ id }) {
     await this.getOne({ id })
     const [result] = await conn.query('DELETE FROM clients WHERE id = ?', id)
