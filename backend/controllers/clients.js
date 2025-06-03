@@ -50,7 +50,6 @@ export class ClientsController {
       }
 
       const employeeExists = await UserModel.getOne({ camp: 'id', value: req.body.employeeId })
-      console.log(employeeExists)
       if (!employeeExists) {
         throw new BadRequestError('El empleado especificado no existe.')
       }
