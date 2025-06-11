@@ -1,6 +1,6 @@
 import z from 'zod'
 
-const clientSchema = z.object({
+const baseClientSchema = z.object({
   firstName: z.string()
     .min(3, { message: 'El nombre debe tener al menos 3 caracteres.' })
     .max(30, { message: 'El nombre no puede exceder los 30 caracteres.' })
@@ -24,7 +24,9 @@ const clientSchema = z.object({
       message: 'El número telefónico debe tener entre 10 y 11 dígitos'
     }).optional().or(z.literal('')),
   employeeId: z.string().uuid()
-}).refine(data => {
+})
+
+const clientSchema = baseClientSchema.refine(data => {
   const hasNameOrAka = !!data.firstName?.trim() || !!data.aka?.trim()
   const lastNameImpliesFirstName = !data.lastName?.trim() || !!data.firstName?.trim()
   return hasNameOrAka && lastNameImpliesFirstName
@@ -35,5 +37,16 @@ export function validateClient (data) {
 }
 
 export function validatePartialClient (data) {
-  return clientSchema.partial().safeParse(data)
+  const partialSchema = baseClientSchema.partial().refine(data => {
+    const hasRelevantFields = data.hasOwnProperty('firstName') || data.hasOwnProperty('lastName') || data.hasOwnProperty('aka')
+
+    if (hasRelevantFields) return true
+
+    const hasNameOrAka = !!data.firstName?.trim() || !!data.aka?.trim()
+    const lastNameImpliesFirstName = !data.lastName?.trim() || !!data.firstName?.trim()
+
+    return hasNameOrAka && lastNameImpliesFirstName
+  }, { message: 'Si actualiza nombre/apellido/apodo, debe mantener la lógica: nombre o apodo requerido, y apellido requiere nombre' })
+
+  return partialSchema.safeParse(data)
 }
