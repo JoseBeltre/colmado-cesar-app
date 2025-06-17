@@ -78,7 +78,6 @@ export class ClientsController {
         id: parseInt(id),
         ...result.data
       }
-      console.log(client)
 
       const updatedClient = await ClientsModel.update({ client })
       return res.status(200).json(updatedClient)
@@ -108,7 +107,7 @@ export class ClientsController {
     try {
       const clientId = Number(id)
       if (isNaN(clientId)) {
-        throw new BadRequestError('ID debe ser número.')
+        throw new BadRequestError('ID debe ser un número.')
       }
       await ClientsModel.getOne({ id })
 
@@ -123,7 +122,37 @@ export class ClientsController {
       }
 
       const newTransaction = await ClientsModel.addTransaction({ transaction })
-      return res.status(200).json(newTransaction)
+      return res.status(201).json(newTransaction)
+    } catch (error) {
+      errorHandler(res, error)
+    }
+  }
+
+  static async getOneTransaction (req, res) {
+    const { transId } = req.params
+    try {
+      if (isNaN(transId)) {
+        throw new BadRequestError('ID debe ser un número.')
+      }
+
+      const transaction = await ClientsModel.getOneTransaction({ id: transId })
+      return res.status(200).json(transaction)
+    } catch (error) {
+      errorHandler(res, error)
+    }
+  }
+
+  static async getAllTransactions (req, res) {
+    const { id } = req.params
+    try {
+      if (isNaN(Number(id))) {
+        throw new BadRequestError('ID debe ser un número.')
+      }
+
+      await ClientsModel.getOne({ id })
+
+      const transactions = await ClientsModel.getAllTransactions({ id })
+      return res.status(200).json(transactions)
     } catch (error) {
       errorHandler(res, error)
     }

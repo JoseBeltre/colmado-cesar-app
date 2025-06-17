@@ -136,4 +136,18 @@ export class ClientsModel {
     const newTransaction = await this.getOneTransaction({ id: result.insertId })
     return newTransaction
   }
+
+  static async getAllTransactions ({ id }) {
+    const [transactions] = await conn.query(`
+      SELECT 
+      id,
+      amount,
+      description,
+      client_id AS clientId,
+      BIN_TO_UUID(employee_id) as employeeId
+      FROM clients_transactions
+      WHERE client_id = ? `, id)
+
+    return transactions
+  }
 }
