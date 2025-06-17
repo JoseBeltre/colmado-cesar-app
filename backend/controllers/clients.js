@@ -1,6 +1,6 @@
 import { UserModel } from '../models/auth.js'
 import { ClientsModel } from '../models/clients.js'
-import { validateClient } from '../schemas/client.js'
+import { validateClient, validatePartialClient } from '../schemas/client.js'
 import { BadRequestError, errorHandler } from '../utils/errors.js'
 
 export class ClientsController {
@@ -56,6 +56,28 @@ export class ClientsController {
 
       const newClient = await ClientsModel.create({ client: result.data })
       return res.status(201).json(newClient)
+    } catch (error) {
+      errorHandler(res, error)
+    }
+  }
+
+  static async update (req, res) {
+    const { id } = req.params
+    try {
+      const result = validatePartialClient(req.body)
+      if (!result.success) {
+        throw new BadRequestError(result.error.message)
+      }
+
+      await ClientsModel.getOne({ id })
+      const client = {
+        id: parseInt(id),
+        ...result.data
+      }
+      console.log(client)
+
+      const updatedClient = await ClientsModel.update({ client })
+      return res.status(200).json(updatedClient)
     } catch (error) {
       errorHandler(res, error)
     }

@@ -65,6 +65,38 @@ export class ClientsModel {
     return newClient
   }
 
+  static async update ({ client }) {
+    const allowedFields = {
+      firstName: 'first_name',
+      lastName: 'last_name',
+      aka: 'aka',
+      phoneNumber: 'phone_number',
+      address: 'address'
+    }
+    let query = 'UPDATE clients SET '
+    const variables = []
+
+    for (const field in client) {
+      if (allowedFields[field]) {
+        query += allowedFields[field] + ' = ?, '
+        variables.push(client[field])
+      }
+    }
+
+    query = query.slice(0, query.length - 2)
+    query += ' WHERE id = ?'
+    variables.push(client.id)
+
+    const [result] = await conn.query(query, variables)
+    console.log(result)
+    if (!result.affectedRows) {
+      throw new Error('No se pudo actualizar la información del cliente.')
+    }
+    const updatedClient = this.getOne({ id: client.id })
+
+    return updatedClient
+  }
+
   static async delete ({ id }) {
     await this.getOne({ id })
     const [result] = await conn.query('DELETE FROM clients WHERE id = ?', id)
